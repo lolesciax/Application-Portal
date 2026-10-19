@@ -1,0 +1,2 @@
+/* Compatibility entry point; the review feature owns its dialog styles. */
+@import '../features/review/styles/ApplicationReviewModal.css';

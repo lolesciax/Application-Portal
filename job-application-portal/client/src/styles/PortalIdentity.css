@@ -1,0 +1,28 @@
+/* Application Portal's own blue identity. Keep these tokens local to this product. */
+:root {
+  --portal-text-base: .875rem;
+  --portal-text-sm: .8125rem;
+  --portal-heading-sm: 1rem;
+  --portal-heading-md: 1.125rem;
+  --portal-heading-lg: clamp(1.375rem, 1.25rem + .2vw, 1.5rem);
+
+  --portal-primary: #3659d9;
+  --portal-primary-hover: #2845b5;
+  --portal-midnight: #12213d;
+  --portal-accent: #58b3e8;
+  --portal-ink: #18243d;
+  --portal-muted: #626f88;
+  --portal-line: #dce3f1;
+  --portal-surface: #f5f7fc;
+  --portal-soft: #eaf0ff;
+}
+.auth-page { --auth-primary: var(--portal-primary); --auth-ink: var(--portal-ink); --auth-muted: var(--portal-muted); }
+.auth-story { background: radial-gradient(ellipse at 10% 100%, #203f7b 0%, transparent 65%), var(--portal-midnight); }
+.admin-dashboard .dashboard-sidebar { background: linear-gradient(170deg, var(--portal-midnight), #192f58); }
+.auth-story-card { border-top: 2px solid var(--portal-accent); }
+.auth-page .auth-submit:hover:not(:disabled), .workspace-primary:hover:not(:disabled), .admin-dashboard .btn-primary:hover, .landing-page .btn-primary:hover { background: var(--portal-primary-hover); }
+.auth-page .field input:focus, .auth-page .field textarea:focus { border-color: var(--portal-primary); box-shadow: 0 0 0 3px #3659d91a; }
+.auth-page a:focus-visible, .auth-page button:focus-visible, .workspace-page a:focus-visible, .workspace-page button:focus-visible, .landing-page a:focus-visible { outline-color: var(--portal-primary); }
+.workspace-avatar, .signup-profile-summary, .preview-step { background: var(--portal-soft); }
+.profile-readiness progress::-webkit-progress-value { background: var(--portal-primary); }
+.profile-readiness progress::-moz-progress-bar { background: var(--portal-primary); }

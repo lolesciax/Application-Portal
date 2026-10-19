@@ -64,7 +64,7 @@ router.put('/applications/:id/status', [auth, auth.adminOnly], async (req, res) 
     }
     
     application.status = status;
-    if (adminNotes) application.adminNotes = adminNotes;
+    if (typeof adminNotes === 'string') application.adminNotes = adminNotes.trim();
     application.updatedAt = Date.now();
     
     await application.save();

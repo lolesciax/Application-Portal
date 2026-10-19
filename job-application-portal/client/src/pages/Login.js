@@ -1,186 +1,67 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import '../styles/Login.css';
+import AuthLayout from '../components/AuthLayout';
+import FormField from '../components/FormField';
+import Icon from '../components/Icon';
+import { validLoginIdentifier } from '../utils/validation';
 
-const Login = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    password: ''
-  });
+export default function Login() {
+  const [formData, setFormData] = useState({ username: '', password: '' });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const [failedAttempts, setFailedAttempts] = useState(0);
   const [cooldownTime, setCooldownTime] = useState(0);
-  const { login, user } = useAuth();
+  const busy = useRef(false);
+  const { login, user, loading: sessionLoading } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user) {
-      if (user.role === 'admin') {
-        navigate('/admin-dashboard');
-      } else {
-        navigate('/engineer-dashboard');
-      }
-    }
-  }, [user, navigate]);
-
+    if (user && !sessionLoading) navigate(user.role === 'admin' ? '/admin-dashboard' : '/engineer-dashboard', { replace: true });
+  }, [user, sessionLoading, navigate]);
   useEffect(() => {
-    let timer;
-    if (cooldownTime > 0) {
-      timer = setInterval(() => {
-        setCooldownTime((prev) => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            setFailedAttempts(0);
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    }
-    return () => clearInterval(timer);
+    if (!cooldownTime) return;
+    const timer = setTimeout(() => setCooldownTime(value => value - 1), 1000);
+    return () => clearTimeout(timer);
   }, [cooldownTime]);
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
+  const handleSubmit = async event => {
+    event.preventDefault();
+    if (busy.current || cooldownTime || sessionLoading) return;
+    const errors = {};
+    if (!formData.username.trim()) errors.username = 'Enter your username or email address.';
+    else if (!validLoginIdentifier(formData.username.trim())) errors.username = 'Enter a valid email or a username with 4-20 letters, numbers, or underscores.';
+    if (!formData.password.trim()) errors.password = 'Enter your password.';
+    setFieldErrors(errors);
+    if (Object.keys(errors).length) { document.getElementById(errors.username ? 'login-username' : 'login-password')?.focus(); return; }
+    busy.current = true;
+    setSubmitting(true); setError('');
+    try {
+      const result = await login(formData.username.trim().toLowerCase(), formData.password);
+      if (!result.success) {
+        const attempts = failedAttempts + 1;
+        setFailedAttempts(attempts >= 5 ? 0 : attempts);
+        if (attempts >= 5) { setCooldownTime(60); setError('Too many unsuccessful attempts. Please try again in a minute.'); }
+        else setError(`${result.error} (${5 - attempts} attempts remaining before 60s cooldown)`);
+      } else setFailedAttempts(0);
+    } catch { setError('We could not reach the server. Please try again.'); }
+    finally { busy.current = false; setSubmitting(false); }
   };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    if (cooldownTime > 0) {
-      setError(`Too many failed attempts. Please wait ${cooldownTime} seconds before trying again.`);
-      return;
-    }
-
-    const username = formData.username.trim().toLowerCase();
-
-    // Hardcoded admin check
-    if (username === 'admin' && formData.password === 'admin123') {
-      const adminUser = {
-        id: 'admin001',
-        username: 'admin',
-        firstName: 'System',
-        lastName: 'Administrator',
-        name: 'Administrator',
-        email: 'admin@system.com',
-        role: 'admin'
-      };
-      localStorage.setItem('token', 'admin-token-123');
-      localStorage.setItem('user', JSON.stringify(adminUser));
-      setUser(adminUser);
-      navigate('/admin-dashboard');
-      window.location.reload();
-      return;
-    }
-
-    setLoading(true);
-    const result = await login(username, formData.password);
-
-    if (!result.success) {
-      const newAttempts = failedAttempts + 1;
-      setFailedAttempts(newAttempts);
-
-      if (newAttempts >= 5) {
-        setCooldownTime(60);
-        setError('Too many failed attempts (5/5). Please wait 60 seconds before trying again.');
-        setFailedAttempts(0);
-      } else {
-        setError(`${result.error} (${newAttempts}/5 attempts remaining before 60s cooldown)`);
-      }
-      setLoading(false);
-    } else {
-      setFailedAttempts(0);
-    }
-  };
-
-  const setUser = (userData) => {
-    window.dispatchEvent(new CustomEvent('authChange', { detail: userData }));
-  };
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const goBack = () => {
-    navigate('/');
-  };
-
-  return (
-    <div className="auth-page login-page">
-      <div className="form-container">
-        <button
-          onClick={goBack}
-          className="btn-back"
-        >
-          Back
-        </button>
-        <h2>Welcome Back</h2>
-        <p className="form-subtitle">Login with your username to access your dashboard</p>
-        {error && <div className="alert alert-error">{error}</div>}
-        {cooldownTime > 0 && (
-          <div className="alert alert-warning" style={{ backgroundColor: '#fff3cd', color: '#856404' }}>
-            Cooldown active: {cooldownTime} seconds remaining
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              name="username"
-              className="form-control"
-              placeholder="Enter your username"
-              value={formData.username}
-              onChange={handleChange}
-              disabled={cooldownTime > 0}
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                className="form-control"
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                disabled={cooldownTime > 0}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={togglePasswordVisibility}
-                disabled={cooldownTime > 0}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                <img
-                  src={`${process.env.PUBLIC_URL}/${showPassword ? 'hide' : 'view'}.png`}
-                  alt={showPassword ? 'Hide password' : 'Show password'}
-                  className="password-toggle-icon"
-                />
-              </button>
-            </div>
-          </div>
-          <button type="submit" className="btn-submit" disabled={loading || cooldownTime > 0}>
-            {loading ? 'Logging in...' : cooldownTime > 0 ? `Wait ${cooldownTime}s` : 'Login'}
-          </button>
-        </form>
-        <p className="auth-footnote">
-          Don&apos;t have an account? <Link to="/register">Create Account</Link>
-        </p>
-      </div>
-    </div>
-  );
-};
-
-export default Login;
+  const change = event => { const { name, value } = event.target; setFormData(data => ({ ...data, [name]: value })); setFieldErrors(errors => ({ ...errors, [name]: '' })); setError(''); };
+  const disabled = submitting || cooldownTime > 0 || sessionLoading;
+  return <AuthLayout title="Welcome back." description="Sign in to pick up where you left off.">
+    {error && <div className="auth-alert" role="alert">{error}</div>}
+    {cooldownTime > 0 && <p className="auth-cooldown">You can try again in <strong>{cooldownTime}s</strong>.</p>}
+    <form className="auth-form" noValidate onSubmit={handleSubmit} aria-busy={submitting}>
+      <FormField id="login-username" label="Username or email" name="username" value={formData.username} onChange={change} autoComplete="username" autoCapitalize="none" spellCheck={false} placeholder="you@example.com" disabled={disabled} error={fieldErrors.username} required />
+      <FormField id="login-password" label="Password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={change} autoComplete="current-password" placeholder="Enter your password" disabled={disabled} error={fieldErrors.password} required>
+        <button type="button" className="field-action" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)} disabled={disabled}><Icon name="eye" /></button>
+      </FormField>
+      <button type="submit" className="auth-submit" disabled={disabled}>{submitting ? 'Signing in...' : cooldownTime ? `Wait ${cooldownTime}s` : sessionLoading ? 'Restoring session...' : 'Login'}<Icon name="arrow" size={18} /></button>
+    </form>
+    <div className="auth-divider"><span>YOUR NEXT OPPORTUNITY AWAITS</span></div>
+    <p className="auth-footnote">Don't have an account? <Link to="/register">Create your profile <Icon name="arrow" size={14} /></Link></p>
+  </AuthLayout>;
+}

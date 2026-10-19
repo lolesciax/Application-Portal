@@ -105,14 +105,14 @@
 .recent-activity-name {
   display: block;
   color: #102347;
-  font-size: 0.9rem;
+  font-size: var(--portal-text-sm);
   margin-bottom: 4px;
 }
 
 .recent-activity-meta {
   margin: 0;
   color: #64748b;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-sm);
   line-height: 1.4;
 }
 
@@ -130,7 +130,7 @@
 
 .strip-label {
   color: #1e3c72;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-sm);
   font-weight: 600;
 }
 
@@ -149,7 +149,7 @@
   background: rgba(255, 255, 255, 0.92);
   border: 1px solid rgba(30, 60, 114, 0.1);
   color: #294b86;
-  font-size: 0.82rem;
+  font-size: var(--portal-text-sm);
   font-weight: 500;
 }
 
@@ -191,7 +191,7 @@
 
 .error-text {
   color: #ef4444;
-  font-size: 0.75rem;
+  font-size: var(--portal-text-sm);
   margin-top: 4px;
   display: block;
 }
@@ -235,13 +235,13 @@
 
 .modal-info-label {
   color: #64748b;
-  font-size: 0.75rem;
+  font-size: var(--portal-text-sm);
   font-weight: 600;
 }
 
 .modal-info-value {
   color: #102347;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-sm);
   line-height: 1.45;
   word-break: break-word;
 }
@@ -249,7 +249,7 @@
 .modal-resume-btn {
   margin-top: 10px;
   padding: 6px 16px;
-  font-size: 0.75rem;
+  font-size: var(--portal-text-base);
   display: inline-block;
 }
 
@@ -261,7 +261,7 @@
 .admin-success-modal .modal-body p {
   margin: 0;
   color: #475569;
-  font-size: 0.86rem;
+  font-size: var(--portal-text-base);
   line-height: 1.5;
   text-align: center;
 }

@@ -38,14 +38,14 @@
   display: block;
   margin-bottom: 6px;
   color: #102347;
-  font-size: 0.85rem;
+  font-size: var(--portal-text-sm);
 }
 
 .status-detail-card p {
   margin: 0;
   color: #5f7084;
   line-height: 1.5;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-base);
 }
 
 .admin-notes {
@@ -81,19 +81,19 @@
   display: block;
   margin-bottom: 4px;
   color: #102347;
-  font-size: 0.85rem;
+  font-size: var(--portal-text-sm);
 }
 
 .info-list-meta {
   margin: 0;
   color: #64748b;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-sm);
   line-height: 1.4;
 }
 
 .info-list-value {
   color: #0f766e;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-sm);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -113,7 +113,7 @@
   border: 1px solid #dfe8f3;
   color: #475569;
   line-height: 1.5;
-  font-size: 0.85rem;
+  font-size: var(--portal-text-sm);
 }
 
 .dashboard-checklist li::before {
@@ -147,13 +147,13 @@
 .form-section-header h4 {
   margin: 0 0 4px;
   color: #102347;
-  font-size: 0.9rem;
+  font-size: var(--portal-heading-sm);
 }
 
 .form-section-header p {
   margin: 0;
   color: #64748b;
-  font-size: 0.8rem;
+  font-size: var(--portal-text-base);
   line-height: 1.5;
 }
 
@@ -173,7 +173,7 @@
   background: rgba(220, 252, 231, 0.95);
   border: 1px solid rgba(22, 163, 74, 0.12);
   border-radius: 12px;
-  font-size: 0.875rem;
+  font-size: var(--portal-text-sm);
   color: #166534;
 }
 
@@ -191,7 +191,7 @@
 
 .refresh-application-btn {
   min-width: 120px;
-  font-size: 0.78rem;
+  font-size: var(--portal-text-base);
   padding: 8px 14px;
   white-space: nowrap;
 }
@@ -204,7 +204,7 @@
 .engineer-update-modal .modal-body p {
   margin: 0;
   color: #475569;
-  font-size: 0.86rem;
+  font-size: var(--portal-text-base);
   line-height: 1.5;
   text-align: center;
 }
@@ -225,7 +225,7 @@
 
 .error-text {
   color: #ef4444;
-  font-size: 0.75rem;
+  font-size: var(--portal-text-sm);
   margin-top: 4px;
   display: block;
 }
@@ -251,3 +251,12 @@
     min-width: 0;
   }
 }
+
+.applicant-overview { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 24px; padding: 28px; background: linear-gradient(120deg, #eef5ff, #f5fbfa); border: 1px solid #dce7f3; border-radius: 14px; }
+.applicant-overview .overview-label { font-size: var(--portal-text-sm); text-transform: uppercase; letter-spacing: .1em; color: #59779e; font-weight: 700; }
+.applicant-overview h1 { font-size: clamp(1.3rem, 3vw, 1.8rem); color: #19365b; margin: 8px 0 12px; }
+.applicant-overview p { color: #657990; line-height: 1.8; font-size: var(--portal-text-base); max-width: 580px; }
+.overview-stage { flex-shrink: 0; padding: 18px 22px; background: white; border: 1px solid #dbe5ef; border-radius: 10px; }
+.overview-stage span { display: block; font-size: var(--portal-text-sm); color: #6f839a; margin-bottom: 6px; }
+.overview-stage strong { color: #29568c; font-size: var(--portal-text-sm); }
+@media(max-width: 650px) { .applicant-overview { align-items: stretch; flex-direction: column; padding: 22px; } }

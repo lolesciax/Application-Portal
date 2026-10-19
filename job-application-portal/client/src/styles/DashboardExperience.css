@@ -1,0 +1,4 @@
+/* Keep layout before visual identity to preserve the existing cascade. */
+@import './dashboard/Layout.css';
+@import './dashboard/VisualIdentity.css';
+@import './dashboard/Pages.css';

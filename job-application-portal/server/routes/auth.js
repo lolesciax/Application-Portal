@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const auth = require('../middleware/auth');
+const { validName, validEmail, validPhone, validPassword, validBirthDate, validLoginIdentifier } = require('../utils/validation');
 
 const escapeRegExp = (value = '') => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const RESERVED_USERNAMES = new Set(['admin']);
@@ -79,6 +80,10 @@ const formatUserResponse = (user) => ({
 router.post('/register', async (req, res) => {
   try {
     const { name, fullName, firstName, lastName, username, email, password, phone, address, dateOfBirth } = req.body;
+    const fields = { name, fullName, firstName, lastName, username, email, password, phone, address, dateOfBirth };
+    if (Object.values(fields).some(value => value != null && typeof value !== 'string')) {
+      return res.status(400).json({ msg: 'Account fields must contain text.' });
+    }
     const fallbackParts = splitFullName(fullName || name || '');
     const normalizedFirstName = (firstName || fallbackParts.firstName || '').trim();
     const normalizedLastName = (lastName || fallbackParts.lastName || '').trim();
@@ -96,6 +101,15 @@ router.post('/register', async (req, res) => {
     if (isReservedUsername(normalizedUsername)) {
       return res.status(400).json({ msg: 'This username is not available' });
     }
+
+    const errors = {};
+    if (!validName(normalizedFirstName)) errors.firstName = 'Enter a valid first name (2-50 characters).';
+    if (!validName(normalizedLastName)) errors.lastName = 'Enter a valid last name (2-50 characters).';
+    if (!validEmail(normalizedEmail)) errors.email = 'Enter a valid email address.';
+    if (!validPhone(phone || '')) errors.phone = 'Enter exactly 11 digits without spaces or punctuation.';
+    if (!validPassword(password)) errors.password = 'Use 8 or more characters with uppercase, lowercase, and a number. Letters and numbers only.';
+    if (!validBirthDate(dateOfBirth || '')) errors.dateOfBirth = 'Applicants must be 18-100 years old. Enter a valid birth date.';
+    if (Object.keys(errors).length) return res.status(400).json({ msg: Object.values(errors)[0], errors });
 
     let user = await findUserByUsername(normalizedUsername);
     if (user) {
@@ -186,6 +200,13 @@ router.get('/check-email', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    const identifier = username || email || '';
+    if ([username, email].some(value => value != null && typeof value !== 'string') || typeof identifier !== 'string' || typeof password !== 'string' || !password.trim()) {
+      return res.status(400).json({ msg: 'Enter your username or email and password.' });
+    }
+    if (!validLoginIdentifier(identifier.trim())) {
+      return res.status(400).json({ msg: 'Enter a valid username or email address.' });
+    }
     const normalizedUsername = normalizeUsername(username || '');
     let user = await findUserByUsername(normalizedUsername);
 

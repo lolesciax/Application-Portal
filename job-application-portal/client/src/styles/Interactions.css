@@ -1,0 +1,110 @@
+/* Interactions and dashboard spacing belong to the Application Portal only. */
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) :is(button, a, summary) {
+  -webkit-tap-highlight-color: #3659d91a;
+  touch-action: manipulation;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+}
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) button:not(:disabled),
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) summary { cursor: pointer; }
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) :is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 3px solid var(--portal-primary);
+  outline-offset: 4px;
+}
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+:is(.auth-submit, .workspace-primary, .auth-back, .auth-previous, .portal-final-cta .btn) svg { transition: transform 160ms ease; }
+.admin-dashboard .sidebar-link { position: relative; }
+.admin-dashboard .sidebar-link::before {
+  content: '';
+  position: absolute;
+  inset: 12px auto 12px 0;
+  width: 3px;
+  border-radius: 5px;
+  background: var(--portal-accent);
+  transform: scaleY(0);
+  transition: transform 160ms ease;
+}
+.admin-dashboard .sidebar-link.active::before { transform: scaleY(1); }
+.admin-dashboard .sidebar-link.active .sidebar-link-title { color: white; }
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) button:not(:disabled):active,
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) a.btn:active {
+  transform: translateY(1px) scale(.985);
+  box-shadow: none;
+}
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal) button[aria-busy='true'] { cursor: progress; }
+.admin-refresh-btn[aria-busy='true'] svg { animation: portal-refresh 900ms linear infinite; }
+@keyframes portal-refresh { to { transform: rotate(360deg); } }
+@media (hover: hover) and (pointer: fine) {
+  :is(.auth-page .auth-submit, .workspace-primary, .landing-page .btn-primary, .admin-dashboard .btn-primary, .portal-modal .btn-submit):not(:disabled):hover {
+    background: var(--portal-primary-hover);
+    border-color: var(--portal-primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 14px #3659d924;
+  }
+  :is(.workspace-signout, .auth-previous, .admin-pagination button, .admin-results-toolbar button, .admin-dashboard .btn-secondary, .portal-modal .btn-secondary):not(:disabled):hover {
+    background: var(--portal-soft);
+    border-color: #a8b9ef;
+    color: var(--portal-primary-hover);
+    transform: translateY(-1px);
+  }
+  .admin-dashboard .sidebar-link:not(:disabled):hover { background: #ffffff12; border-color: #ffffff24; transform: translateX(3px); }
+  .admin-dashboard .sidebar-link:not(:disabled):hover::before { transform: scaleY(1); }
+  .admin-dashboard .sidebar-logout-btn:not(:disabled):hover { background: #ffffff16; border-color: #ffffff38; color: white; transform: none; box-shadow: none; }
+  :is(.auth-submit, .workspace-primary, .portal-final-cta .btn):not(:disabled):hover svg { transform: translateX(3px); }
+  :is(.auth-back, .auth-previous):hover svg { transform: translateX(-3px); }
+  :where(.auth-page, .workspace-page, .landing-page) a:not(.btn, .auth-brand, .workspace-brand, .portal-brand, .admin-brand):hover { color: var(--portal-primary); text-decoration: underline; text-underline-offset: 4px; }
+  .auth-page .field-action:not(:disabled):hover { background: var(--portal-soft); color: var(--portal-primary); }
+  .portal-modal .close-btn:not(:disabled):hover { color: var(--portal-primary); background: var(--portal-soft); transform: none; }
+  .resume-file-button:hover { background: var(--portal-soft); border-color: var(--portal-primary); color: var(--portal-primary-hover); }
+  .resume-remove:hover, .signup-profile-summary button:hover { color: var(--portal-primary-hover); text-decoration-thickness: 2px; }
+  .portal-faq-items summary:hover { color: var(--portal-primary); }
+  .admin-dashboard .table tbody tr:hover { background: #f2f5fd; }
+}
+.portal-faq-items summary { border-radius: 4px; }
+.portal-faq-items details[open] summary { color: var(--portal-primary); }
+.workspace-content { max-width: 1240px; padding: 38px 32px 64px; }
+.workspace-header { padding-inline: max(32px, calc((100vw - 1176px) / 2)); }
+.applicant-grid { gap: 28px; grid-template-columns: minmax(0, 1fr) 300px; }
+.admin-dashboard .dashboard-main { width: 100%; max-width: 1320px; margin-inline: auto; padding: 42px clamp(28px, 2.5vw, 40px) 64px; }
+.admin-dashboard .dashboard-hero { margin-bottom: 34px; }
+.admin-dashboard .dashboard-section-grid { gap: 24px; }
+.admin-dashboard .stats-grid { gap: 16px; margin-bottom: 28px; }
+.admin-dashboard .table-card { margin-top: 8px; }
+.admin-dashboard :is(#admin-overview, #admin-pipeline, #admin-applications) { scroll-margin-top: 24px; }
+.portal-modal { max-width: 860px; width: min(860px, calc(100% - 48px)); }
+@media (max-width: 1100px) {
+  .workspace-content { padding-inline: 32px; }
+  .workspace-header { padding-inline: 32px; }
+  .applicant-grid { gap: 22px; grid-template-columns: minmax(0, 1fr) 260px; }
+  .admin-dashboard .dashboard-main { padding-inline: 30px; }
+}
+@media (max-width: 850px) {
+  .applicant-grid { grid-template-columns: 1fr; }
+  .admin-dashboard .dashboard-main { max-width: 760px; padding: 32px 28px 48px; }
+  .workspace-content { max-width: 760px; padding: 30px 28px 48px; }
+  .workspace-header { padding-inline: 28px; }
+  .admin-dashboard .sidebar-link::before { inset: auto 12px 0; width: auto; height: 2px; transform: scaleX(0); }
+  .admin-dashboard .sidebar-link.active::before { transform: scaleX(1); }
+}
+@media (max-width: 600px) {
+  .workspace-content, .admin-dashboard .dashboard-main { padding: 28px 20px 44px; }
+  .workspace-header { padding-inline: 20px; }
+  .workspace-signout { min-height: 40px; }
+  .workspace-primary, .auth-submit { min-height: 48px; }
+  .admin-pagination button, .admin-results-toolbar button, .portal-modal .close-btn { min-height: 40px; }
+  .admin-dashboard .dashboard-section-grid { gap: 20px; }
+  .portal-modal { width: calc(100% - 24px); max-height: calc(100dvh - 32px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  :where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) *,
+  :where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) *::before {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  :where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) :is(button, a):is(:hover, :active) { transform: none !important; }
+}

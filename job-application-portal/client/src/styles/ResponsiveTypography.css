@@ -1,0 +1,222 @@
+﻿/* One readable type scale and fluid layouts for the Application Portal. */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body { font-size: var(--portal-text-base); line-height: 1.6; }
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) { font-size: var(--portal-text-base); line-height: 1.6; }
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) :is(h1, h2, h3, h4) { text-wrap: balance; overflow-wrap: anywhere; }
+:where(.auth-page, .workspace-page, .landing-page, .portal-modal, .session-error) :is(p, small, label, td, .modal-info-value) { overflow-wrap: anywhere; }
+.auth-page .auth-heading h1, .workspace-page-heading h1, .admin-dashboard .dashboard-hero h1, .session-error h1 { font-size: var(--portal-heading-lg); line-height: 1.2; }
+.auth-page .signup-step-heading h2, .workspace-card-header h2, .admin-dashboard .application-card h3, .portal-modal h4 { font-size: var(--portal-heading-sm); line-height: 1.4; }
+.application-preview h2, .portal-modal .modal-header h3 { font-size: var(--portal-heading-md); line-height: 1.4; }
+.auth-page .auth-heading > p, .auth-story-content > p, .portal-hero-copy > p:not(.portal-eyebrow),
+.workspace-page-heading p, .admin-dashboard .dashboard-hero p, .feature-card p,
+.portal-faq-items details p, .portal-faq > div > p:last-child, .portal-final-cta p:last-child { font-size: var(--portal-text-base); line-height: 1.7; }
+.auth-page .field label, .auth-page .field-hint, .auth-page .field-error,
+.auth-page .auth-footnote, .auth-page .auth-bottom-note, .auth-page .auth-topbar,
+.auth-page .auth-eyebrow, .auth-story-footer, .auth-story-card p, .auth-story-steps li,
+.auth-divider span, .signup-progress li, .signup-step-heading > span, .password-rules li,
+.signup-profile-summary strong, .signup-profile-summary span, .auth-page .field label > span,
+.workspace-field label, .workspace-helper, .workspace-card-header p, .form-section-title p,
+.workspace-submit-bar p, .workspace-breadcrumb, .workspace-eyebrow, .workspace-account small,
+.workspace-brand small, .readiness-checklist li, .application-timeline strong, .application-timeline small,
+.profile-readiness span, .resume-upload-box p, .resume-upload-box > small,
+.admin-dashboard .summary-label, .admin-dashboard .summary-caption, .admin-dashboard .section-subtitle,
+.admin-dashboard .recent-activity-meta, .admin-dashboard .hero-stat-label, .admin-dashboard .sidebar-kicker,
+.admin-dashboard .sidebar-description, .admin-dashboard .sidebar-link-meta, .admin-dashboard .sidebar-user-label,
+.admin-dashboard .sidebar-user-meta, .admin-dashboard .strip-label, .admin-dashboard .strip-chip,
+.admin-results-toolbar p, .admin-results-toolbar label, .admin-pagination, .portal-modal .modal-info-label,
+.portal-eyebrow, .preview-label, .preview-footnote, .portal-footer { font-size: var(--portal-text-sm); line-height: 1.6; }
+.auth-page .field input, .auth-page .field textarea, .auth-page .auth-submit, .auth-previous,
+.workspace-field input, .workspace-field textarea, .workspace-primary, .workspace-signout,
+.admin-dashboard .form-control, .admin-dashboard .btn, .admin-dashboard .table td,
+.admin-results-toolbar select, .admin-results-toolbar button, .admin-pagination button,
+.portal-modal .form-control, .portal-modal .btn, .portal-modal .btn-submit, .portal-modal .modal-info-value,
+.landing-page .btn, .portal-faq-items summary { font-size: var(--portal-text-base); line-height: 1.5; }
+.auth-page .field input, .auth-page .field textarea, .admin-dashboard .form-control,
+.workspace-field input, .workspace-field textarea, .portal-modal .form-control { min-height: 48px; }
+.auth-page .auth-submit, .auth-previous, .workspace-primary, .workspace-signout,
+.admin-dashboard .btn, .admin-pagination button, .admin-results-toolbar button,
+.portal-modal .btn, .portal-modal .close-btn { min-height: 44px; }
+.auth-story { height: auto; min-height: 100svh; position: relative; }
+.auth-story-content { padding-block: 56px; }
+.auth-story-footer { line-height: 1.7; letter-spacing: .04em; }
+.auth-panel { max-width: 480px; padding-block: 56px; }
+.signup-page .auth-panel { max-width: 560px; }
+.auth-workspace { padding-inline: clamp(28px, 3vw, 52px); }
+.auth-topbar { flex-wrap: wrap; row-gap: 10px; }
+.auth-divider span { white-space: normal; text-align: center; }
+.auth-divider { gap: 12px; }
+.signup-profile-summary strong, .signup-profile-summary span { overflow-wrap: anywhere; }
+.password-rules { column-gap: 18px; row-gap: 12px; }
+.password-rules li { align-items: flex-start; }
+.password-rules li svg { flex-shrink: 0; margin-top: 4px; }
+.signup-progress { flex-wrap: wrap; }
+.auth-field-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.workspace-header { height: auto; min-height: 88px; padding-block: 14px; }
+.workspace-brand { min-width: 0; }
+.workspace-brand > span { flex-shrink: 0; }
+.workspace-brand > div { min-width: 0; }
+.workspace-account { flex-shrink: 0; }
+.workspace-account > div { max-width: 220px; overflow-wrap: anywhere; }
+.workspace-account strong { font-size: var(--portal-text-sm); }
+.workspace-form-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+.workspace-submit-bar { flex-wrap: wrap; }
+.workspace-submit-bar p { max-width: 340px; }
+.profile-readiness { grid-template-columns: auto minmax(0, 1fr); gap: 14px; }
+.profile-readiness > span { text-align: right; }
+.resume-upload-box > strong { font-size: var(--portal-text-base); }
+.resume-file-button, .resume-remove { font-size: var(--portal-text-sm); }
+.workspace-page .status-badge, .portal-modal .status-badge { font-size: var(--portal-text-sm); }
+.admin-dashboard .dashboard-main, .workspace-content, .applicant-aside { min-width: 0; }
+.admin-dashboard .hero-stat { min-width: 0; }
+.admin-dashboard .dashboard-hero-meta { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.admin-dashboard .stats-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.admin-dashboard .summary-card { min-width: 0; }
+.admin-dashboard .filter-bar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, .65fr); }
+.admin-dashboard .filter-group { min-width: 0; flex-direction: column; align-items: stretch; gap: 8px; }
+.admin-dashboard .filter-group .form-control { width: 100%; min-width: 0; }
+.admin-results-toolbar { flex-wrap: wrap; }
+.admin-results-toolbar > div { flex-wrap: wrap; min-width: 0; }
+.admin-results-toolbar select { min-width: 0; max-width: 100%; }
+.admin-pagination { flex-wrap: wrap; gap: 14px; }
+.admin-pagination > div { flex-wrap: wrap; gap: 10px; }
+.admin-dashboard .table-wrapper { min-width: 0; overflow-x: auto; overscroll-behavior-inline: contain; }
+.admin-dashboard .table { min-width: 760px; }
+.admin-dashboard .table th { font-size: var(--portal-text-sm); }
+.admin-dashboard .table td { max-width: 260px; }
+.admin-dashboard .sidebar-link-title, .admin-dashboard .sidebar-user strong, .admin-brand { font-size: var(--portal-text-sm); }
+.admin-dashboard .sidebar-brand h2 { font-size: 1.5rem; }
+.admin-dashboard .sidebar-link-meta { padding-left: 0; }
+.portal-modal { overflow-x: hidden; }
+.portal-modal .modal-info-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.portal-modal .modal-info-item { grid-template-columns: minmax(90px, .7fr) minmax(0, 1fr); gap: 12px; }
+.portal-modal .modal-info-value { min-width: 0; overflow-wrap: anywhere; }
+.portal-hero-grid { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); gap: clamp(28px, 4vw, 64px); }
+.application-preview { min-width: 0; }
+.application-preview li strong { font-size: var(--portal-text-base); }
+.application-preview li p { font-size: var(--portal-text-sm); }
+.preview-step { flex-shrink: 0; }
+.landing-page .portal-hero-note { font-size: var(--portal-text-sm) !important; }
+.landing-page .features-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.feature-card h3 { font-size: var(--portal-heading-sm); line-height: 1.4; }
+.portal-nav { flex-wrap: wrap; padding-block: 16px; }
+.portal-nav > div { gap: 20px; }
+.portal-nav > div a { font-size: var(--portal-text-sm); }
+@media (max-width: 1280px) {
+  .admin-dashboard .stats-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 1100px) {
+  .admin-dashboard .dashboard-section-grid { grid-template-columns: 1fr; }
+  .admin-results-toolbar { align-items: flex-start; flex-direction: column; }
+  .portal-modal .modal-info-item { grid-template-columns: 1fr; gap: 6px; }
+}
+@media (max-width: 1000px) {
+  .applicant-grid { grid-template-columns: 1fr; }
+  .applicant-aside { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 950px) {
+  .auth-page { display: block; }
+  .auth-story { min-height: 0; padding: 22px 28px; }
+  .auth-story-content, .auth-story-footer, .auth-story::before { display: none; }
+  .auth-workspace { min-height: calc(100svh - 82px); padding: 28px; }
+  .auth-panel, .signup-page .auth-panel { padding-block: 40px; }
+  .auth-bottom-note { margin-top: auto; }
+}
+@media (max-width: 850px) {
+  .workspace-content { max-width: 100%; }
+  .admin-dashboard .dashboard-main { max-width: 100%; }
+  .portal-hero-grid { grid-template-columns: 1fr; }
+  .landing-page .features-grid { grid-template-columns: 1fr; }
+  .admin-dashboard .sidebar-nav { flex-wrap: wrap; }
+  .admin-dashboard .sidebar-link { min-width: 0; }
+  .admin-dashboard .sidebar-link-title { font-size: var(--portal-text-sm); }
+}
+@media (max-width: 700px) {
+  .admin-dashboard .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-dashboard .filter-bar { grid-template-columns: 1fr; }
+  .admin-dashboard .dashboard-section-grid { gap: 20px; }
+  .workspace-form-grid, .applicant-aside { grid-template-columns: 1fr; }
+  .workspace-submit-bar { flex-direction: column; align-items: stretch; }
+  .workspace-submit-bar p { max-width: none; }
+  .workspace-page-heading { align-items: flex-start; flex-direction: column; }
+  .portal-modal .modal-info-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .workspace-header { padding-inline: 20px; gap: 12px; flex-wrap: wrap; }
+  .workspace-brand { font-size: var(--portal-text-sm); flex: 1; }
+  .workspace-signout { padding-inline: 12px; }
+  .auth-workspace { padding: 24px 20px; }
+  .auth-story { padding-inline: 20px; }
+  .auth-field-grid { grid-template-columns: 1fr; }
+  .password-rules { grid-template-columns: 1fr; }
+  .signup-actions { flex-wrap: wrap; }
+  .signup-actions .auth-submit { flex: 1 1 190px; }
+  .admin-dashboard .dashboard-sidebar { padding-inline: 20px; }
+  .admin-dashboard .sidebar-link-title { gap: 6px; }
+  .admin-pagination > div { gap: 8px; }
+  .admin-pagination button { padding-inline: 10px; }
+  .portal-nav { gap: 14px; }
+  .portal-nav > div { gap: 10px; }
+  .portal-faq-items summary { line-height: 1.6; }
+  .portal-final-cta .btn { white-space: normal; }
+}
+@media (max-width: 380px) {
+  .admin-dashboard .stats-grid { grid-template-columns: 1fr; }
+  .admin-dashboard .sidebar-link { padding-inline: 6px; }
+  .admin-dashboard .sidebar-link-title { flex-wrap: wrap; }
+  .workspace-card, .admin-dashboard .application-card { padding: 18px; }
+  .auth-page .signup-step-heading { align-items: flex-start; flex-wrap: wrap; }
+  .portal-pagination > div { flex-wrap: wrap; }
+}
+
+/* Selective hierarchy, validated in a temporary browser preview before applying. */
+
+body { font-size: var(--portal-text-base); }
+.portal-hero-copy h1 { font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem); }
+.auth-page .field label, .workspace-field label, .review-field label,
+.admin-dashboard .filter-group label, .portal-modal .form-group label { font-size: .875rem; }
+.auth-page .field input, .auth-page .field textarea, .workspace-field input, .workspace-field textarea,
+.admin-dashboard .form-control, .portal-modal .form-control { font-size: 1rem; }
+.auth-page .auth-submit, .auth-previous, .workspace-primary, .workspace-signout,
+.admin-dashboard .btn, .admin-results-toolbar select, .admin-results-toolbar button, .admin-pagination button,
+.portal-modal .btn, .portal-modal .btn-submit, .landing-page .btn { font-size: .875rem; }
+.admin-dashboard .table td, .portal-modal .modal-info-value { font-size: .9375rem; }
+.workspace-brand, .auth-brand, .portal-brand { font-size: .9375rem; }
+.auth-workspace .auth-eyebrow, .auth-story .auth-eyebrow, .auth-story-footer, .auth-divider span,
+.workspace-eyebrow, .workspace-breadcrumb, .workspace-brand small, .workspace-account small,
+.admin-dashboard .sidebar-kicker, .admin-dashboard .sidebar-link-meta, .admin-dashboard .sidebar-user-label,
+.admin-dashboard .sidebar-user-meta, .portal-eyebrow, .preview-label, .review-eyebrow { font-size: .75rem; }
+.auth-story-footer { letter-spacing: .03em; }
+.admin-dashboard .sidebar-brand h2 { font-size: 1.375rem; }
+.admin-dashboard .sidebar-description { font-size: .875rem; }
+.admin-dashboard .hero-stat-label { font-size: .75rem; }
+.admin-dashboard .summary-label { font-size: .8125rem; }
+.review-title-row p:last-child, .review-applicant > div > span, .review-status,
+.review-details dt, .review-footer > p, .review-helper, .review-resume p, .review-field label > span,
+.review-field-error, .review-validation-summary, .review-alert { font-size: .8125rem; }
+@media (max-width: 700px) {
+  .review-footer { gap: 10px; }
+}
+
+/* Balanced auth proportions, checked at the user's desktop viewport. */
+.auth-page { --portal-text-base: .875rem; --portal-text-sm: .8125rem; --portal-heading-sm: 1rem; }
+.auth-page .auth-heading h1 { font-size: clamp(1.375rem, 1.25rem + .2vw, 1.5rem); margin-bottom: 12px; }
+.auth-page .auth-story h2 { font-size: clamp(1.625rem, 1.375rem + .4vw, 1.875rem); }
+.auth-page .auth-panel { max-width: 440px; padding-block: 36px; }
+.auth-page.signup-page .auth-panel { max-width: 500px; }
+.auth-page .auth-story-content { max-width: 400px; padding-block: 36px; }
+.auth-page .field label { font-size: .875rem; margin-bottom: 7px; }
+.auth-page .field input, .auth-page .field textarea { font-size: .9375rem; min-height: 48px; padding: 11px 14px; }
+.auth-page .has-action input { padding-right: 48px; }
+.auth-page .auth-submit, .auth-page .auth-previous { font-size: .875rem; min-height: 46px; padding: 11px 18px; }
+.auth-page .auth-form { gap: 18px; }
+.auth-page .auth-brand { font-size: .9375rem; }
+.auth-page .auth-workspace .auth-eyebrow, .auth-page .auth-story .auth-eyebrow { font-size: .75rem; }
+.auth-page.signup-page .auth-panel { padding-block: 28px; }
+.auth-page .auth-heading > p { margin-bottom: 24px; line-height: 1.6; }
+.auth-page .signup-profile-summary button { font-size: var(--portal-text-sm); }
+.auth-page .signup-step-heading { margin-bottom: 16px; }
+.auth-page .signup-progress { margin-bottom: 22px; }
+.auth-page .auth-divider { margin-block: 24px 18px; }
+.auth-page .auth-footnote { margin-top: 20px; }
+.auth-page .auth-story-card { margin-top: 28px; padding: 18px; }
+.auth-page .auth-story-steps { gap: 14px; margin-top: 26px; }

@@ -1,434 +1,114 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import useAccountAvailability from '../features/auth/hooks/useAccountAvailability';
 import { useAuth } from '../context/AuthContext';
-import '../styles/Register.css';
+import AuthLayout from '../components/AuthLayout';
+import FormField from '../components/FormField';
+import Icon from '../components/Icon';
+import { validName, validEmail, validPhone, validUsername, validPassword, validBirthDate } from '../utils/validation';
 
-const Register = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    address: '',
-    dateOfBirth: '',
-    password: '',
-    confirmPassword: ''
-  });
-  const [usernameExists, setUsernameExists] = useState(false);
-  const [emailExists, setEmailExists] = useState(false);
+const initial = { username: '', firstName: '', lastName: '', email: '', phone: '', address: '', dateOfBirth: '', password: '', confirmPassword: '' };
+
+export default function Register() {
+  const [formData, setFormData] = useState(initial);
+  const [step, setStep] = useState(0);
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [fieldErrors, setFieldErrors] = useState({});
-  const [loading, setLoading] = useState(false);
-  const { register, user } = useAuth();
+  const { availability, checkAvailability, clearAvailability } = useAccountAvailability(formData);
+  const busy = useRef(false);
+  const { register, user, loading: sessionLoading } = useAuth();
   const navigate = useNavigate();
+  const stepHeading = useRef(null);
 
-  useEffect(() => {
-    if (user) {
-      navigate(user.role === 'admin' ? '/admin-dashboard' : '/engineer-dashboard');
-    }
-  }, [user, navigate]);
+  useEffect(() => { if (user && !sessionLoading) navigate(user.role === 'admin' ? '/admin-dashboard' : '/engineer-dashboard', { replace: true }); }, [user, sessionLoading, navigate]);
+  useEffect(() => { if (step === 1) stepHeading.current?.focus(); }, [step]);
 
-  const validateUsername = (username) => {
-    const usernameRegex = /^[a-zA-Z0-9_]{4,20}$/;
-    return usernameRegex.test(username);
-  };
-
-  const validateNamePart = (name) => {
-    const nameRegex = /^[a-zA-Z\s]{2,50}$/;
-    return nameRegex.test(name);
-  };
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-  };
-
-  const validatePhone = (phone) => {
-    const phoneRegex = /^[0-9]{10,15}$/;
-    return phoneRegex.test(phone);
-  };
-
-  const validateDateOfBirth = (dob) => {
-    if (!dob) return true;
-
-    const today = new Date();
-    const birthDate = new Date(dob);
-    let age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
-
-    return age >= 18 && age <= 100;
-  };
-
-  const checkUsernameExists = async (username) => {
-    if (!validateUsername(username)) {
-      return false;
-    }
-
-    try {
-      const res = await axios.get('/auth/check-username', {
-        params: { username }
-      });
-      setUsernameExists(res.data.exists);
-      return res.data.exists;
-    } catch (err) {
-      console.error('Username check failed', err);
-      return false;
-    }
-  };
-
-  const checkEmailExists = async (email) => {
-    if (!validateEmail(email)) {
-      return false;
-    }
-
-    try {
-      const res = await axios.get('/auth/check-email', {
-        params: { email }
-      });
-      setEmailExists(res.data.exists);
-      return res.data.exists;
-    } catch (err) {
-      console.error('Email check failed', err);
-      return false;
-    }
-  };
-
-  const validatePassword = (password) => {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
-    return passwordRegex.test(password);
-  };
-
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData({
-      ...formData,
-      [name]: value
-    });
-
-    if (name === 'username') {
-      setUsernameExists(false);
-    }
-
-    if (name === 'email') {
-      setEmailExists(false);
-    }
-
-    if (fieldErrors[name]) {
-      setFieldErrors((currentErrors) => ({
-        ...currentErrors,
-        [name]: ''
-      }));
-    }
-  };
-
-  const handleUsernameBlur = async () => {
-    if (formData.username) {
-      const exists = await checkUsernameExists(formData.username.trim().toLowerCase());
-      setFieldErrors((currentErrors) => ({
-        ...currentErrors,
-        username: exists ? 'This username is already taken.' : ''
-      }));
-    }
-  };
-
-  const handleEmailBlur = async () => {
-    if (formData.email) {
-      const exists = await checkEmailExists(formData.email.trim());
-      setFieldErrors((currentErrors) => ({
-        ...currentErrors,
-        email: exists ? 'This email is already registered.' : ''
-      }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const change = event => {
+    const { name, value } = event.target;
+    clearAvailability(name);
+    setFormData(data => ({ ...data, [name]: value }));
+    setFieldErrors(errors => ({ ...errors, [name]: '' }));
     setError('');
-    setFieldErrors({});
-
-    const username = formData.username.trim().toLowerCase();
-    const nextFieldErrors = {};
-
-    if (!validateUsername(username)) {
-      nextFieldErrors.username = 'Username must be 4-20 characters and use only letters, numbers, or underscores';
+  };
+  const validate = currentStep => {
+    const errors = {};
+    if (currentStep === 0) {
+      if (!validName(formData.firstName)) errors.firstName = 'Enter 2-50 characters using letters, spaces, apostrophes, or hyphens.';
+      if (!validName(formData.lastName)) errors.lastName = 'Enter 2-50 characters using letters, spaces, apostrophes, or hyphens.';
+      if (!validEmail(formData.email)) errors.email = 'Enter a valid email address.';
+      else if (availability.email === 'taken') errors.email = 'This email is already registered. Sign in or use another address.';
+      if (!validPhone(formData.phone)) errors.phone = 'Enter exactly 11 digits without spaces or punctuation.';
+      if (!validBirthDate(formData.dateOfBirth)) errors.dateOfBirth = 'Enter a valid birth date. Applicants must be 18-100 years old.';
+    } else {
+      if (!validUsername(formData.username)) errors.username = 'Use 4-20 letters, numbers, or underscores.';
+      else if (availability.username === 'taken') errors.username = 'This username is taken. Try another one.';
+      if (!validPassword(formData.password)) errors.password = 'Use 8 or more characters with uppercase, lowercase, and a number. Letters and numbers only.';
+      if (formData.password !== formData.confirmPassword) errors.confirmPassword = 'Your passwords do not match.';
+      if (!formData.confirmPassword) errors.confirmPassword = 'Enter your password again.';
     }
-
-    if (!nextFieldErrors.username) {
-      const usernameTaken = await checkUsernameExists(username);
-      if (usernameTaken) {
-        nextFieldErrors.username = 'This username is already taken. Please choose a different one.';
-      }
-    }
-
-    if (!validateNamePart(formData.firstName.trim())) {
-      nextFieldErrors.firstName = 'First name must contain only letters and spaces (2-50 characters)';
-    }
-
-    if (!validateNamePart(formData.lastName.trim())) {
-      nextFieldErrors.lastName = 'Last name must contain only letters and spaces (2-50 characters)';
-    }
-
-    const email = formData.email.trim();
-
-    if (!validateEmail(email)) {
-      nextFieldErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!nextFieldErrors.email) {
-      const emailTaken = await checkEmailExists(email);
-      if (emailTaken) {
-        nextFieldErrors.email = 'This email is already registered. Please use a different email.';
-      }
-    }
-
-    if (!validatePhone(formData.phone.trim())) {
-      nextFieldErrors.phone = 'Phone number must contain only numbers (10-15 digits)';
-    }
-
-    if (!validateDateOfBirth(formData.dateOfBirth)) {
-      nextFieldErrors.dateOfBirth = 'You must be at least 18 years old';
-    }
-
-    if (!validatePassword(formData.password)) {
-      nextFieldErrors.password = 'Password must be at least 8 characters with uppercase, lowercase, and number. Special characters are not allowed.';
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      nextFieldErrors.confirmPassword = 'Passwords do not match';
-    }
-
-    if (Object.keys(nextFieldErrors).some((key) => nextFieldErrors[key])) {
-      setFieldErrors(nextFieldErrors);
-      return;
-    }
-
-    setLoading(true);
-
-    const result = await register({
-      username,
-      firstName: formData.firstName.trim(),
-      lastName: formData.lastName.trim(),
-      email,
-      phone: formData.phone.trim(),
-      address: formData.address.trim(),
-      dateOfBirth: formData.dateOfBirth || null,
-      password: formData.password
+    return errors;
+  };
+  const showErrors = (errors, targetStep) => {
+    setFieldErrors(errors); setStep(targetStep);
+    requestAnimationFrame(() => {
+      const name = Object.keys(errors)[0];
+      document.getElementById(name === 'password' ? 'register-password' : name === 'confirmPassword' ? 'confirm-password' : name)?.focus();
     });
-
-    if (!result.success) {
-      const normalizedError = String(result.error || '').toLowerCase();
-
-      if (normalizedError.includes('username')) {
-        setFieldErrors((currentErrors) => ({ ...currentErrors, username: result.error }));
-      } else if (normalizedError.includes('email')) {
-        setFieldErrors((currentErrors) => ({ ...currentErrors, email: result.error }));
-      } else if (normalizedError.includes('password')) {
-        setFieldErrors((currentErrors) => ({ ...currentErrors, password: result.error }));
-      } else {
-        setError(result.error);
+  };
+  const handleSubmit = async event => {
+    event.preventDefault();
+    if (busy.current || sessionLoading) return;
+    const errors = validate(step);
+    if (Object.keys(errors).length) { showErrors(errors, step); return; }
+    if (step === 0) { setFieldErrors({}); setStep(1); return; }
+    const profileErrors = validate(0);
+    if (Object.keys(profileErrors).length) { showErrors(profileErrors, 0); return; }
+    busy.current = true; setSubmitting(true); setError('');
+    const data = { ...formData };
+    delete data.confirmPassword;
+    try {
+      const result = await register({ ...data, username: data.username.trim().toLowerCase(), firstName: data.firstName.trim(), lastName: data.lastName.trim(), email: data.email.trim().toLowerCase(), phone: data.phone.trim(), address: data.address.trim(), dateOfBirth: data.dateOfBirth || null });
+      if (!result.success) {
+        const message = result.error || 'We could not create your account. Please try again.';
+        if (result.errors && Object.keys(result.errors).length) {
+          const profileFields = ['firstName', 'lastName', 'email', 'phone', 'dateOfBirth'];
+          showErrors(result.errors, profileFields.some(name => result.errors[name]) ? 0 : 1);
+        }
+        else if (/username/i.test(message)) showErrors({ username: message }, 1);
+        else if (/phone/i.test(message)) showErrors({ phone: message }, 0);
+        else if (/email/i.test(message)) showErrors({ email: message }, 0);
+        else setError(message);
       }
-
-      setLoading(false);
-    }
+    } catch { setError('We could not reach the server. Your details are still here. Please try again.'); }
+    finally { busy.current = false; setSubmitting(false); }
   };
+  const availabilityHint = name => ({ checking: 'Checking availability...', available: 'Available to use.', taken: 'Already registered. Please try another.', unknown: 'Availability will be checked when you create your account.' }[availability[name]]);
+  const field = (name, label, props = {}) => <FormField id={name} name={name} label={label} value={formData[name]} onChange={change} error={fieldErrors[name] || (availability[name] === 'taken' ? availabilityHint(name) : '')} disabled={submitting} {...props} />;
+  const passwordRules = [['8 or more characters', formData.password.length >= 8], ['Uppercase & lowercase', /[A-Z]/.test(formData.password) && /[a-z]/.test(formData.password)], ['At least one number', /[0-9]/.test(formData.password)], ['Letters & numbers only', !!formData.password && /^[a-zA-Z0-9]+$/.test(formData.password)]];
 
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
-
-  const goBack = () => {
-    navigate('/');
-  };
-
-  return (
-    <div className="container">
-      <div className="form-container">
-        <button
-          onClick={goBack}
-          className="btn-back"
-        >
-          Back
-        </button>
-        <h2>Create Account</h2>
-        <p className="form-subtitle">Create your profile now so your application form is already prepared later.</p>
-        {error && <div className="alert alert-error">{error}</div>}
-        <form onSubmit={handleSubmit} className="auth-form">
-          <div className="form-group">
-            <label>Username</label>
-            <input
-              type="text"
-              name="username"
-              className={`form-control ${fieldErrors.username ? 'is-invalid' : ''}`}
-              placeholder="Choose a username"
-              value={formData.username}
-              onChange={handleChange}
-              onBlur={handleUsernameBlur}
-              required
-            />
-            <small className={`hint-text ${(fieldErrors.username || usernameExists) ? 'error' : ''}`}>
-              {fieldErrors.username || (usernameExists ? 'This username is already taken.' : 'Use 4-20 letters, numbers, or underscores')}
-            </small>
-          </div>
-          <div className="form-group">
-            <label>First Name</label>
-            <input
-              type="text"
-              name="firstName"
-              className={`form-control ${fieldErrors.firstName ? 'is-invalid' : ''}`}
-              placeholder="Enter your first name"
-              value={formData.firstName}
-              onChange={handleChange}
-              required
-            />
-            {fieldErrors.firstName && <small className="hint-text error">{fieldErrors.firstName}</small>}
-          </div>
-          <div className="form-group">
-            <label>Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              className={`form-control ${fieldErrors.lastName ? 'is-invalid' : ''}`}
-              placeholder="Enter your last name"
-              value={formData.lastName}
-              onChange={handleChange}
-              required
-            />
-            {fieldErrors.lastName && <small className="hint-text error">{fieldErrors.lastName}</small>}
-          </div>
-          <div className="form-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              className={`form-control ${fieldErrors.email ? 'is-invalid' : ''}`}
-              placeholder="Enter your email"
-              value={formData.email}
-              onChange={handleChange}
-              onBlur={handleEmailBlur}
-              required
-            />
-            <small className={`hint-text ${(fieldErrors.email || emailExists) ? 'error' : ''}`}>
-              {fieldErrors.email || (emailExists ? 'This email is already registered.' : 'Email must be unique and valid format')}
-            </small>
-          </div>
-          <div className="form-group">
-            <label>Phone Number</label>
-            <input
-              type="tel"
-              name="phone"
-              className={`form-control ${fieldErrors.phone ? 'is-invalid' : ''}`}
-              placeholder="Enter your phone number"
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-            <small className={`hint-text ${fieldErrors.phone ? 'error' : ''}`}>
-              {fieldErrors.phone || 'Use 10 to 15 digits only.'}
-            </small>
-          </div>
-          <div className="form-group">
-            <label>Address</label>
-            <textarea
-              name="address"
-              className="form-control"
-              placeholder="Enter your current address"
-              value={formData.address}
-              onChange={handleChange}
-              rows="3"
-            />
-          </div>
-          <div className="form-group">
-            <label>Date of Birth</label>
-            <input
-              type="date"
-              name="dateOfBirth"
-              className={`form-control ${fieldErrors.dateOfBirth ? 'is-invalid' : ''}`}
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-            />
-            <small className={`hint-text ${fieldErrors.dateOfBirth ? 'error' : ''}`}>
-              {fieldErrors.dateOfBirth || 'You must be at least 18 years old to apply.'}
-            </small>
-          </div>
-          <div className="form-group">
-            <label>Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                className={`form-control ${fieldErrors.password ? 'is-invalid' : ''}`}
-                placeholder="Enter your password"
-                value={formData.password}
-                onChange={handleChange}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={togglePasswordVisibility}
-                aria-label={showPassword ? 'Hide password' : 'Show password'}
-              >
-                <img
-                  src={`${process.env.PUBLIC_URL}/${showPassword ? 'hide' : 'view'}.png`}
-                  alt={showPassword ? 'Hide password' : 'Show password'}
-                  className="password-toggle-icon"
-                />
-              </button>
-            </div>
-            <small className={`hint-text ${fieldErrors.password ? 'error' : ''}`}>
-              {fieldErrors.password || 'Password must be at least 8 characters with uppercase, lowercase, and number. No special characters allowed.'}
-            </small>
-          </div>
-          <div className="form-group">
-            <label>Confirm Password</label>
-            <div className="password-input-wrapper">
-              <input
-                type={showConfirmPassword ? 'text' : 'password'}
-                name="confirmPassword"
-                className={`form-control ${fieldErrors.confirmPassword ? 'is-invalid' : ''}`}
-                placeholder="Confirm your password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                required
-              />
-              <button
-                type="button"
-                className="password-toggle"
-                onClick={toggleConfirmPasswordVisibility}
-                aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-              >
-                <img
-                  src={`${process.env.PUBLIC_URL}/${showConfirmPassword ? 'hide' : 'view'}.png`}
-                  alt={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
-                  className="password-toggle-icon"
-                />
-              </button>
-            </div>
-            {fieldErrors.confirmPassword && <small className="hint-text error">{fieldErrors.confirmPassword}</small>}
-          </div>
-          <button type="submit" className="btn-submit" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
-          </button>
-        </form>
-        <p className="auth-footnote">
-          Already have an account? <Link to="/login">Login here</Link>
-        </p>
-      </div>
-    </div>
-  );
-};
-
-export default Register;
+  return <AuthLayout mode="signup" title="Make your next move." description="Create your profile. Your application comes next.">
+    <ol className="signup-progress" aria-label="Registration progress">{['Your profile', 'Account setup'].map((label, index) => <li key={label} className={step >= index ? 'current' : ''} aria-current={step === index ? 'step' : undefined}><span>{step > index ? <Icon name="check" size={14} /> : index + 1}</span>{label}</li>)}</ol>
+    <div className="signup-step-heading"><h2 ref={stepHeading} tabIndex={-1}>{step === 0 ? 'First, a little about you.' : 'Now, make it yours.'}</h2><span>Step {step + 1} of 2</span></div>
+    {error && <div className="auth-alert" role="alert">{error}</div>}
+    {Object.values(fieldErrors).some(Boolean) && <p className="auth-error-summary" role="alert">Please check the highlighted fields below.</p>}
+    <form className="auth-form" noValidate onSubmit={handleSubmit} aria-busy={submitting}>
+      {step === 0 ? <>
+        <div className="auth-field-grid">{field('firstName', 'First name', { autoComplete: 'given-name', placeholder: 'First name', required: true })}{field('lastName', 'Last name', { autoComplete: 'family-name', placeholder: 'Last name', required: true })}</div>
+        {field('email', 'Email address', { type: 'email', autoComplete: 'email', placeholder: 'you@example.com', required: true, onBlur: () => checkAvailability('email'), hint: availabilityHint('email') || 'The hiring team can contact you here.' })}
+        {field('phone', 'Phone number', { type: 'tel', inputMode: 'numeric', maxLength: 11, minLength: 11, pattern: '[0-9]{11}', autoComplete: 'tel', placeholder: '09123456789', required: true, hint: 'exactly 11 digits, without spaces or punctuation.' })}
+        <div className="auth-field-grid">{field('dateOfBirth', 'Date of birth', { type: 'date', autoComplete: 'bday', optional: true, hint: 'Applicants must be 18 or older.' })}{field('address', 'Address', { autoComplete: 'street-address', placeholder: 'City, province', optional: true })}</div>
+      </> : <>
+        {field('username', 'Username', { autoComplete: 'username', placeholder: 'Choose a username', required: true, onBlur: () => checkAvailability('username'), hint: availabilityHint('username') || '4-20 letters, numbers, or underscores.' })}
+        <FormField id="register-password" name="password" label="Password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={change} autoComplete="new-password" placeholder="Create a password" error={fieldErrors.password} disabled={submitting} required><button type="button" className="field-action" aria-label={showPassword ? 'Hide password' : 'Show password'} aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}><Icon name="eye" /></button></FormField>
+        <ul className="password-rules" aria-label="Password requirements">{passwordRules.map(([label, met]) => <li key={label} className={met ? 'met' : ''}><Icon name="check" size={13} />{label}</li>)}</ul>
+        <FormField id="confirm-password" name="confirmPassword" label="Confirm password" type={showConfirmPassword ? 'text' : 'password'} value={formData.confirmPassword} onChange={change} autoComplete="new-password" placeholder="Enter your password again" error={fieldErrors.confirmPassword} hint={formData.confirmPassword && formData.password === formData.confirmPassword ? 'Your passwords match.' : undefined} disabled={submitting} required><button type="button" className="field-action" aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'} aria-pressed={showConfirmPassword} onClick={() => setShowConfirmPassword(value => !value)}><Icon name="eye" /></button></FormField>
+        <div className="signup-profile-summary"><Icon name="user" /><div><strong>{formData.firstName} {formData.lastName}</strong><span>{formData.email}</span></div><button type="button" onClick={() => setStep(0)} disabled={submitting}>Edit</button></div>
+      </>}
+      <div className="signup-actions">{step === 1 && <button className="auth-previous" type="button" disabled={submitting} onClick={() => { setStep(0); setFieldErrors({}); }}><Icon name="back" size={16} />Back</button>}<button className="auth-submit" type="submit" disabled={submitting || sessionLoading}>{submitting ? 'Creating your account...' : step === 0 ? 'Continue to account setup' : 'Create Account'}<Icon name="arrow" size={18} /></button></div>
+    </form>
+    <p className="auth-footnote">Already have a profile? <Link to="/login">Sign in <Icon name="arrow" size={14} /></Link></p>
+  </AuthLayout>;
+}
