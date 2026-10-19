@@ -1,0 +1,404 @@
+/* Application Portal experience layer.
+   Loaded last so the app's existing design tokens and component rules remain the source of truth.
+   Applies to public, auth, applicant, admin and review flows without changing their business logic. */
+
+:root {
+  --portal-radius-sm: 10px;
+  --portal-radius-md: 14px;
+  --portal-radius-lg: 20px;
+  --portal-shadow-card: 0 12px 36px rgba(18, 33, 61, .055);
+  --portal-shadow-float: 0 20px 60px rgba(18, 33, 61, .13);
+  --portal-focus-ring: 0 0 0 3px var(--portal-soft);
+}
+
+html { min-width: 0; scroll-padding-top: 88px; }
+body { min-width: 0; background: var(--portal-surface); color: var(--portal-ink); }
+#root, .App, .workspace-page, .landing-page, .auth-page { min-width: 0; }
+:where(.workspace-page, .landing-page, .auth-page, .portal-modal) :is(h1, h2, h3, h4, p, small, strong, span) { overflow-wrap: anywhere; }
+:where(.workspace-page, .landing-page, .auth-page, .portal-modal) :is(button, input, select, textarea) { font-family: inherit; }
+:where(.workspace-page, .landing-page, .auth-page, .portal-modal) :is(button, a) { -webkit-tap-highlight-color: transparent; }
+:where(.workspace-page, .landing-page, .auth-page, .portal-modal) :is(a, button, input, select, textarea, summary):focus-visible,
+.admin-sidebar-resizer:focus-visible {
+  outline: 3px solid var(--portal-primary);
+  outline-offset: 3px;
+}
+:where(.workspace-page, .landing-page, .auth-page, .portal-modal) :is(button, a, input, select, textarea):disabled { cursor: not-allowed; }
+
+/* Landing / public pages */
+.landing-page .container { width: min(100% - 48px, 1200px); padding-inline: 0; }
+.landing-page .portal-nav { gap: 20px; }
+.landing-page .portal-nav > div { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+.landing-page .portal-hero-grid { gap: clamp(28px, 4vw, 60px); }
+.landing-page .portal-hero-copy, .landing-page .application-preview { min-width: 0; }
+.landing-page .portal-hero-copy h1 { line-height: 1.12; letter-spacing: -.045em; }
+.landing-page .cta-buttons { display: flex; flex-wrap: wrap; gap: 12px; }
+.landing-page .cta-buttons .btn { min-height: 48px; border-radius: var(--portal-radius-sm); font-weight: 600; }
+.landing-page .application-preview, .landing-page .feature-card {
+  border-radius: var(--portal-radius-lg);
+  box-shadow: var(--portal-shadow-card);
+}
+.landing-page .features-grid { gap: clamp(14px, 2vw, 24px); }
+.landing-page .feature-card { min-width: 0; }
+.landing-page .portal-faq, .landing-page .portal-final-cta > div { gap: clamp(20px, 3vw, 42px); }
+.landing-page .portal-faq-items { min-width: 0; }
+.landing-page .portal-faq-items details { border-color: var(--portal-line); }
+.landing-page .portal-faq-items summary { min-height: 48px; }
+.landing-page .portal-footer { row-gap: 10px; }
+
+/* Login / registration */
+.auth-page { grid-template-columns: minmax(300px, .88fr) minmax(0, 1.12fr); }
+.auth-page .auth-story { min-width: 0; min-height: min(760px, 100svh); }
+.auth-page .auth-workspace { min-width: 0; padding-inline: clamp(24px, 4vw, 64px); }
+.auth-page .auth-panel { width: 100%; min-width: 0; }
+.auth-page .auth-form, .auth-page .auth-field-grid { min-width: 0; }
+.auth-page .auth-field-grid > * { min-width: 0; }
+.auth-page .field input, .auth-page .field textarea {
+  min-width: 0;
+  min-height: 48px;
+  border-radius: var(--portal-radius-sm);
+  border-color: var(--portal-line);
+  color: var(--portal-ink);
+}
+.auth-page .field input:hover:not(:disabled), .auth-page .field textarea:hover:not(:disabled) { border-color: var(--portal-accent); }
+.auth-page .auth-submit, .auth-page .auth-previous { min-height: 48px; border-radius: var(--portal-radius-sm); }
+.auth-page .auth-topbar { flex-wrap: wrap; }
+.auth-page .auth-alert { border-radius: var(--portal-radius-sm); }
+.auth-page .signup-progress { flex-wrap: wrap; row-gap: 12px; }
+.auth-page .signup-step-heading { gap: 12px; }
+.auth-page .password-rules { gap: 7px 14px; }
+.auth-page .signup-profile-summary { min-width: 0; }
+.auth-page .signup-profile-summary > div { min-width: 0; }
+.auth-page .signup-actions { min-width: 0; }
+.auth-page .signup-actions .auth-submit { min-width: 0; }
+
+/* Applicant navigation / account area */
+.applicant-page .workspace-header {
+  width: 100%;
+  min-height: 78px;
+  padding: 12px max(24px, calc((100vw - 1240px) / 2));
+  gap: 16px;
+  background: #fff;
+  border-bottom: 1px solid var(--portal-line);
+}
+.applicant-page .workspace-brand, .applicant-page .workspace-account { min-width: 0; }
+.applicant-page .workspace-brand > div, .applicant-page .workspace-account > div { min-width: 0; }
+.applicant-page .workspace-account small { max-width: 240px; text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+.applicant-page .workspace-avatar { flex-shrink: 0; }
+.applicant-page .workspace-signout {
+  margin-left: 4px;
+  min-height: 42px;
+  white-space: nowrap;
+  border-color: var(--portal-line);
+  border-radius: var(--portal-radius-sm);
+  font-weight: 600;
+}
+.applicant-page .workspace-signout:hover { border-color: var(--portal-primary); color: var(--portal-primary); background: var(--portal-soft); }
+.applicant-page .workspace-content { width: 100%; max-width: 1280px; min-width: 0; margin-inline: auto; padding: 28px clamp(18px, 3vw, 36px) 64px; }
+.applicant-page .applicant-module-nav { max-width: 100%; overflow-x: auto; scrollbar-width: thin; overscroll-behavior-x: contain; }
+.applicant-page .applicant-module-nav a { white-space: nowrap; }
+.applicant-page .workspace-page-heading { gap: 18px; border-radius: var(--portal-radius-lg); }
+.applicant-page .workspace-page-heading > div:first-child { min-width: 0; }
+.applicant-page .applicant-hero-status { max-width: 100%; }
+.applicant-page .applicant-hero-status small { text-align: right; }
+.applicant-page .workspace-card { border-color: var(--portal-line); border-radius: var(--portal-radius-md); box-shadow: var(--portal-shadow-card); }
+.applicant-page .applicant-overview-panels, .applicant-page .applicant-aside { min-width: 0; }
+.applicant-page .applicant-overview-panels .applicant-aside { gap: 18px; }
+.applicant-page .module-action-card { border-radius: var(--portal-radius-md); }
+.applicant-page .applicant-next-action { gap: 16px; }
+.applicant-page .applicant-next-action > div { min-width: 0; }
+.applicant-page .applicant-next-action .applicant-action-label { white-space: normal; }
+.applicant-page .application-preflight { max-width: 100%; border-radius: var(--portal-radius-md); box-shadow: var(--portal-shadow-card); }
+.applicant-page .preflight-checks, .applicant-page .preflight-checks a { min-width: 0; }
+.applicant-page .applicant-editor-module { max-width: 100%; min-width: 0; }
+.applicant-page .workspace-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.applicant-page .workspace-field { min-width: 0; }
+.applicant-page .workspace-field :is(input, textarea) { min-width: 0; min-height: 48px; border-radius: var(--portal-radius-sm); border-color: var(--portal-line); }
+.applicant-page .workspace-field :is(input, textarea):hover:not(:disabled) { border-color: var(--portal-accent); }
+.applicant-page .resume-upload-box { min-width: 0; border-radius: var(--portal-radius-md); }
+.applicant-page .resume-file-button, .applicant-page .workspace-primary { min-height: 44px; border-radius: var(--portal-radius-sm); }
+.applicant-page .resume-file-button:focus-within { outline: 3px solid var(--portal-primary); outline-offset: 3px; }
+.applicant-page .workspace-submit-bar { min-width: 0; }
+.applicant-page .workspace-submit-bar p { max-width: 400px; }
+.applicant-page .profile-readiness progress { width: 100%; }
+.applicant-page .workspace-notice { border-radius: var(--portal-radius-sm); }
+
+/* Administrator sidebar: resizable desktop, off-canvas mobile. */
+.portal-skip-link { position: fixed; top: 10px; left: 10px; z-index: 1000; padding: 10px 14px; border-radius: var(--portal-radius-sm); background: var(--portal-primary); color: #fff; transform: translateY(-180%); }
+.portal-skip-link:focus { transform: translateY(0); }
+.admin-dashboard .dashboard-shell {
+  display: grid;
+  grid-template-columns: var(--admin-sidebar-width, 248px) minmax(0, 1fr);
+  min-width: 0;
+  min-height: 100svh;
+  align-items: stretch;
+  background: var(--portal-surface);
+}
+.admin-dashboard .dashboard-shell.is-resizing { cursor: col-resize; }
+.admin-dashboard .dashboard-shell.is-resizing * { transition: none !important; }
+.admin-dashboard .dashboard-sidebar {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  align-self: start;
+  overflow-y: auto;
+  overflow-x: visible;
+  scrollbar-width: thin;
+  padding: 24px 16px;
+  gap: 26px;
+  background: #fff;
+  color: var(--portal-ink);
+  border-right: 1px solid var(--portal-line);
+  box-shadow: none;
+  z-index: 12;
+}
+.admin-dashboard .sidebar-brand { gap: 6px; min-width: 0; }
+.admin-dashboard .sidebar-brand-row { display: flex; align-items: center; justify-content: space-between; min-width: 0; gap: 10px; }
+.admin-dashboard .admin-brand { display: flex; align-items: center; min-width: 0; margin: 0 0 4px; gap: 10px; color: var(--portal-ink); text-decoration: none; font-size: var(--portal-text-base); font-weight: 700; line-height: 1.35; }
+.admin-dashboard .admin-brand > span:first-child { display: grid; place-items: center; flex-shrink: 0; width: 38px; height: 38px; color: #fff; background: var(--portal-primary); border-radius: var(--portal-radius-sm); }
+.admin-dashboard .admin-brand > span:last-child { min-width: 0; }
+.admin-dashboard .sidebar-kicker { color: var(--portal-muted); font-size: .7rem; font-weight: 650; letter-spacing: .1em; }
+.admin-dashboard .sidebar-nav { display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px; width: 100%; margin: 0; padding: 0; overflow: visible; }
+.admin-dashboard .sidebar-link {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  padding: 12px 13px;
+  border-radius: var(--portal-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
+  color: var(--portal-muted);
+  text-decoration: none;
+}
+.admin-dashboard .sidebar-link-title { display: flex; align-items: center; justify-content: flex-start; gap: 12px; flex-direction: row; color: inherit; font-size: var(--portal-text-base); font-weight: 600; white-space: normal; }
+.admin-dashboard .sidebar-link-title svg { flex: 0 0 auto; display: block; }
+.admin-dashboard .sidebar-link-meta { display: block; margin-top: 4px; padding-left: 30px; color: var(--portal-muted); font-size: .72rem; line-height: 1.5; }
+.admin-dashboard .sidebar-link:hover { background: var(--portal-surface); color: var(--portal-ink); border-color: var(--portal-line); }
+.admin-dashboard .sidebar-link.active { color: var(--portal-primary); background: var(--portal-soft); border-color: var(--portal-line); box-shadow: inset 3px 0 0 var(--portal-primary); }
+.admin-dashboard .sidebar-link.active::after { content: none; }
+.admin-dashboard .sidebar-link.active .sidebar-link-title { color: var(--portal-primary); }
+.admin-dashboard .sidebar-link.active .sidebar-link-meta { color: var(--portal-muted); }
+.admin-dashboard .sidebar-footer { display: grid; gap: 14px; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--portal-line); }
+.admin-dashboard .sidebar-user { display: flex; flex-direction: column; min-width: 0; gap: 5px; }
+.admin-dashboard .sidebar-user-label { color: var(--portal-muted); }
+.admin-dashboard .sidebar-user strong { color: var(--portal-ink); }
+.admin-dashboard .sidebar-user-meta { color: var(--portal-muted); overflow-wrap: anywhere; }
+.admin-dashboard .sidebar-logout-btn { width: 100%; min-height: 44px; border: 1px solid var(--portal-line); border-radius: var(--portal-radius-sm); color: var(--portal-ink); background: #fff; font-weight: 600; }
+.admin-dashboard .sidebar-logout-btn:hover:not(:disabled) { background: var(--portal-soft); border-color: var(--portal-primary); color: var(--portal-primary); }
+.admin-dashboard .admin-sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 11px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: col-resize;
+  touch-action: none;
+  z-index: 2;
+}
+.admin-dashboard .admin-sidebar-resizer > span { display: block; width: 3px; height: 46px; border-radius: 999px; background: var(--portal-line); transition: background .2s ease; }
+.admin-dashboard .admin-sidebar-resizer:hover > span, .admin-dashboard .admin-sidebar-resizer:focus-visible > span { background: var(--portal-primary); }
+.admin-dashboard .admin-mobile-bar, .admin-dashboard .admin-drawer-close, .admin-dashboard .admin-drawer-backdrop { display: none; }
+
+/* Administrator overview / applications / pipeline */
+.admin-dashboard .dashboard-main { width: 100%; max-width: 1600px; min-width: 0; padding: clamp(22px, 2.6vw, 40px); background: var(--portal-surface); }
+.admin-dashboard .dashboard-hero { min-width: 0; margin-bottom: 22px; border-radius: var(--portal-radius-lg); }
+.admin-dashboard .dashboard-hero h1 { font-weight: 700; letter-spacing: -.035em; }
+.admin-dashboard .dashboard-hero p { line-height: 1.6; }
+.admin-dashboard .summary-card, .admin-dashboard .application-card {
+  min-width: 0;
+  border-radius: var(--portal-radius-md);
+  border-color: var(--portal-line);
+  box-shadow: var(--portal-shadow-card);
+}
+.admin-dashboard .stats-grid, .admin-dashboard .module-action-grid { min-width: 0; }
+.admin-dashboard .admin-dashboard-focus { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 18px; }
+.admin-dashboard .section-header { min-width: 0; }
+.admin-dashboard .section-header > div { min-width: 0; }
+.admin-dashboard .admin-priority-list button, .admin-dashboard .pipeline-candidate-list button { min-width: 0; }
+.admin-dashboard .module-action-card { min-width: 0; border-radius: var(--portal-radius-md); box-shadow: var(--portal-shadow-card); }
+.admin-dashboard .module-action-card > div { min-width: 0; }
+.admin-dashboard .admin-filter-panel { grid-template-columns: minmax(0, 1fr) minmax(180px, 230px); gap: 14px; border-radius: var(--portal-radius-md); background: var(--portal-surface); border-color: var(--portal-line); }
+.admin-dashboard .filter-group { min-width: 0; }
+.admin-dashboard .form-control, .admin-dashboard .admin-results-toolbar select { min-width: 0; min-height: 44px; border-radius: var(--portal-radius-sm); border-color: var(--portal-line); }
+.admin-dashboard .form-control:focus, .admin-dashboard .admin-results-toolbar select:focus { border-color: var(--portal-primary); box-shadow: var(--portal-focus-ring); }
+.admin-dashboard .admin-results-toolbar { gap: 12px; flex-wrap: wrap; }
+.admin-dashboard .admin-results-toolbar > div { flex-wrap: wrap; }
+.admin-dashboard .admin-results-toolbar button, .admin-dashboard .admin-pagination button { min-height: 40px; border-radius: var(--portal-radius-sm); }
+.admin-dashboard .admin-results-toolbar button:hover, .admin-dashboard .admin-pagination button:not(:disabled):hover { color: var(--portal-primary); background: var(--portal-soft); border-color: var(--portal-primary); }
+.admin-dashboard .table-wrapper { max-width: 100%; min-width: 0; overflow-x: auto; border-radius: var(--portal-radius-sm); }
+.admin-dashboard .table { width: 100%; border-collapse: separate; border-spacing: 0; }
+@media (min-width: 721px) {
+  /* On tablets, scroll the directory itself instead of shrinking five columns until unreadable. */
+  .admin-dashboard .table { min-width: 740px; }
+}
+.admin-dashboard .table td { vertical-align: middle; }
+.admin-dashboard .table th, .admin-dashboard .table td { overflow-wrap: anywhere; }
+.admin-dashboard .table tbody tr { transition: background-color .16s ease; }
+.admin-dashboard .application-table-person { min-width: 0; }
+.admin-dashboard .admin-review-button { min-height: 42px; border-radius: var(--portal-radius-sm); }
+.admin-dashboard .admin-pagination { flex-wrap: wrap; row-gap: 14px; }
+.admin-dashboard .pipeline-stage-section, .admin-dashboard .pipeline-workspace { min-width: 0; }
+.admin-dashboard .pipeline-board { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.admin-dashboard .pipeline-lane { min-width: 0; border-radius: var(--portal-radius-md); box-shadow: var(--portal-shadow-card); }
+.admin-dashboard .pipeline-lane-header { min-width: 0; }
+.admin-dashboard .interview-agenda { min-width: 0; }
+.admin-dashboard .interview-agenda-list li { min-width: 0; }
+.admin-dashboard .agenda-candidate, .admin-dashboard .agenda-details { min-width: 0; }
+
+/* Review dialog: keyboard focus, long content, narrow screens */
+.portal-modal.application-review { max-width: min(940px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); border-radius: var(--portal-radius-lg); border-color: var(--portal-line); box-shadow: var(--portal-shadow-float); }
+.portal-modal.application-review .review-shell { min-width: 0; max-height: calc(100dvh - 26px); }
+.portal-modal.application-review .review-header, .portal-modal.application-review .review-body, .portal-modal.application-review .review-footer { min-width: 0; }
+.portal-modal.application-review .review-body { overscroll-behavior-y: contain; }
+.portal-modal.application-review .review-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.portal-modal.application-review .review-form-grid > * { min-width: 0; }
+.portal-modal.application-review .review-footer { flex-wrap: wrap; }
+.portal-modal.application-review .review-footer > div { flex-wrap: wrap; }
+.portal-modal.application-review .review-resume > div { min-width: 0; }
+.portal-modal.application-review .review-tabs { max-width: 100%; }
+.portal-modal.application-review .review-tabs button { min-width: 0; }
+
+@media (max-width: 1200px) {
+  .admin-dashboard .pipeline-board { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-dashboard .admin-dashboard-focus { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 900px) {
+  .admin-dashboard .admin-mobile-bar {
+    position: sticky; top: 0; z-index: 80;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    min-height: 66px; padding: 10px clamp(16px, 4vw, 26px);
+    background: #fff; border-bottom: 1px solid var(--portal-line);
+  }
+  .admin-dashboard .admin-mobile-brand { min-width: 0; display: flex; align-items: center; gap: 10px; color: var(--portal-ink); text-decoration: none; font-size: var(--portal-text-base); }
+  .admin-dashboard .admin-mobile-brand > span { flex-shrink: 0; display: grid; place-items: center; width: 36px; height: 36px; border-radius: var(--portal-radius-sm); background: var(--portal-primary); color: #fff; font-weight: 700; }
+  .admin-dashboard .admin-menu-toggle { display: flex; align-items: center; gap: 8px; flex-shrink: 0; min-height: 44px; padding: 8px 12px; background: #fff; border: 1px solid var(--portal-line); border-radius: var(--portal-radius-sm); color: var(--portal-ink); font-weight: 600; cursor: pointer; }
+  .admin-dashboard .admin-menu-toggle:hover { color: var(--portal-primary); background: var(--portal-soft); }
+  .admin-dashboard .dashboard-shell { display: block; min-width: 0; }
+  .admin-dashboard .dashboard-sidebar {
+    position: fixed; inset: 0 auto 0 0; z-index: 120;
+    width: min(86vw, 324px); max-width: 100%; height: 100dvh;
+    padding: 24px 18px; gap: 24px; display: flex; flex-direction: column;
+    transform: translateX(-105%); visibility: hidden; pointer-events: none;
+    transition: transform .23s ease, visibility .23s ease;
+    border-right: 1px solid var(--portal-line); box-shadow: var(--portal-shadow-float);
+    overflow-y: auto;
+  }
+  .admin-dashboard .dashboard-sidebar.is-open { transform: translateX(0); visibility: visible; pointer-events: auto; }
+  .admin-dashboard .admin-drawer-backdrop { display: block; position: fixed; inset: 0; z-index: 110; width: 100%; height: 100%; border: 0; background: rgba(18, 33, 61, .52); cursor: pointer; }
+  .admin-dashboard .admin-drawer-close { flex-shrink: 0; display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid var(--portal-line); border-radius: var(--portal-radius-sm); color: var(--portal-ink); background: #fff; cursor: pointer; }
+  .admin-dashboard .admin-drawer-close:hover { color: var(--portal-primary); background: var(--portal-soft); }
+  .admin-dashboard .sidebar-brand { display: flex; flex-direction: column; grid-area: auto; }
+  .admin-dashboard .sidebar-brand > .sidebar-kicker { display: block; }
+  .admin-dashboard .sidebar-nav { display: grid; grid-template-columns: 1fr; gap: 7px; }
+  .admin-dashboard .sidebar-link { display: block; min-width: 0; padding: 12px 13px; }
+  .admin-dashboard .sidebar-link-title { justify-content: flex-start; flex-direction: row; gap: 12px; font-size: var(--portal-text-base); }
+  .admin-dashboard .sidebar-link-meta { display: block; }
+  .admin-dashboard .sidebar-footer { display: grid; grid-area: auto; margin-top: auto; padding-top: 20px; border-top: 1px solid var(--portal-line); }
+  .admin-dashboard .sidebar-user { display: flex; }
+  .admin-dashboard .sidebar-logout-btn { width: 100%; min-height: 44px; }
+  .admin-dashboard .admin-sidebar-resizer { display: none; }
+  .admin-dashboard .dashboard-main { padding: 24px clamp(16px, 3vw, 28px) 48px; max-width: 100%; }
+  .auth-page .auth-story { min-height: 0; }
+  .auth-page .auth-workspace { padding-inline: 24px; }
+  .applicant-page .workspace-account > div { display: block; }
+}
+
+@media (max-width: 720px) {
+  .landing-page .container { width: min(100% - 32px, 1200px); }
+  .landing-page .hero-section { padding-block: 34px 48px; }
+  .landing-page .portal-hero-grid, .landing-page .features-grid { grid-template-columns: minmax(0, 1fr); }
+  .landing-page .portal-hero-copy h1 { font-size: clamp(2rem, 8vw, 3.2rem); }
+  .landing-page .application-preview { padding: 22px; }
+  .landing-page .portal-faq { grid-template-columns: 1fr; }
+  .landing-page .portal-final-cta > div { flex-wrap: wrap; }
+  .auth-page { display: block; }
+  .auth-page .auth-story { position: relative; height: auto; padding: 18px 20px; }
+  .auth-page .auth-story-content, .auth-page .auth-story-footer { display: none; }
+  .auth-page .auth-workspace { min-height: calc(100svh - 74px); padding: 18px 20px 26px; }
+  .auth-page .auth-panel { padding-block: 26px; }
+  .auth-page .auth-topbar { gap: 8px; }
+  .applicant-page .workspace-header { padding-inline: 18px; }
+  .applicant-page .workspace-account > div { display: none; }
+  .applicant-page .workspace-content { padding: 20px 16px 48px; }
+  .applicant-page .workspace-page-heading { align-items: flex-start; flex-direction: column; padding: 22px 20px; }
+  .applicant-page .applicant-hero-status { align-items: flex-start; }
+  .applicant-page .applicant-hero-status small { text-align: left; }
+  .applicant-page .applicant-overview-panels .applicant-aside, .applicant-page .applicant-aside { grid-template-columns: minmax(0, 1fr); }
+  .applicant-page .applicant-overview-panels .status-journey-card, .applicant-page .applicant-overview-panels .aside-note { grid-column: auto; }
+  .applicant-page .application-preflight { grid-template-columns: minmax(0, 1fr); }
+  .applicant-page .preflight-checks { width: 100%; }
+  .applicant-page .workspace-form-grid { grid-template-columns: minmax(0, 1fr); }
+  .applicant-page .workspace-field.wide { grid-column: auto; }
+  .applicant-page .workspace-submit-bar { flex-direction: column; align-items: stretch; }
+  .applicant-page .workspace-submit-bar p { max-width: none; }
+  .applicant-page .workspace-submit-bar .workspace-primary { width: 100%; }
+  .admin-dashboard .dashboard-hero { gap: 16px; }
+  .admin-dashboard .admin-filter-panel { display: grid; grid-template-columns: minmax(0, 1fr); }
+  .admin-dashboard .filter-group { width: 100%; min-width: 0; }
+  .admin-dashboard .pipeline-board { grid-template-columns: minmax(0, 1fr); }
+  .admin-dashboard .pipeline-lane { min-height: 0; }
+  .admin-dashboard .admin-pagination { flex-direction: column; align-items: flex-start; }
+  .admin-dashboard .admin-pagination > div { max-width: 100%; flex-wrap: wrap; }
+  /* Table becomes data-labelled cards rather than an overflowing 720px table. */
+  .admin-dashboard .table-wrapper { overflow: visible; border: 0; }
+  .admin-dashboard .table { display: block; min-width: 0; width: 100%; }
+  .admin-dashboard .table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .admin-dashboard .table tbody { display: grid; gap: 12px; }
+  .admin-dashboard .table tbody tr { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0; padding: 12px; border: 1px solid var(--portal-line); border-radius: var(--portal-radius-md); background: #fff; }
+  .admin-dashboard .table tbody td { display: grid; grid-template-columns: 100px minmax(0, 1fr); gap: 12px; align-items: start; width: 100%; min-width: 0; padding: 10px 4px; border-bottom: 1px solid var(--portal-line); text-align: left; }
+  .admin-dashboard .table tbody td::before { content: attr(data-label); color: var(--portal-muted); font-size: var(--portal-text-sm); font-weight: 600; }
+  .admin-dashboard .table tbody td[data-label="Applicant"] { grid-column: auto; }
+  .admin-dashboard .table tbody td:last-child { border-bottom: 0; }
+  .admin-dashboard .table tbody td[colspan] { display: block; border: 0; }
+  .admin-dashboard .table tbody td[colspan]::before { content: none; }
+  .admin-dashboard .application-table-person { min-width: 0; align-items: flex-start; }
+  .admin-dashboard .application-table-person strong, .admin-dashboard .application-table-person small { overflow-wrap: anywhere; }
+  .admin-dashboard .admin-review-button { width: fit-content; }
+  .admin-dashboard .interview-agenda-list li { row-gap: 10px; }
+  .portal-modal.application-review .review-form-grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (max-width: 480px) {
+  .landing-page .portal-nav > div { justify-content: flex-end; }
+  .landing-page .cta-buttons { flex-direction: column; }
+  .landing-page .cta-buttons .btn { width: 100%; }
+  .landing-page .portal-footer { text-align: center; align-items: center; }
+  .auth-page .auth-field-grid { grid-template-columns: minmax(0, 1fr); }
+  .auth-page .signup-actions { display: flex; flex-wrap: wrap; }
+  .auth-page .signup-actions > * { flex: 1 1 100%; }
+  .applicant-page .workspace-brand > div { font-size: .8125rem; }
+  .applicant-page .workspace-brand small { display: none; }
+  .applicant-page .workspace-account .workspace-avatar { display: none; }
+  .applicant-page .workspace-card, .applicant-page .applicant-editor-module .application-editor, .applicant-page .applicant-editor-module .workspace-form-section { padding: 18px 16px; }
+  .applicant-page .workspace-page-heading { padding: 20px 18px; }
+  .applicant-page .applicant-next-action { grid-template-columns: minmax(0, 1fr); }
+  .applicant-page .applicant-next-action > .dashboard-section-icon, .applicant-page .applicant-next-action > div, .applicant-page .applicant-next-action > .applicant-action-label { grid-column: 1; }
+  .applicant-page .preflight-checks { display: grid; grid-template-columns: 1fr; }
+  .admin-dashboard .dashboard-main { padding: 18px 12px 36px; }
+  .admin-dashboard .application-card { padding: 18px 14px; }
+  .admin-dashboard .stats-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .admin-dashboard .admin-page-hero-count { flex: 0 0 auto; }
+  .admin-dashboard .admin-results-toolbar > div { width: 100%; }
+  .admin-dashboard .admin-results-toolbar select { flex: 1 1 auto; }
+  .admin-dashboard .table tbody td { grid-template-columns: 82px minmax(0, 1fr); gap: 8px; }
+  .admin-dashboard .table tbody td[data-label="Applicant"] { display: block; }
+  .admin-dashboard .table tbody td[data-label="Applicant"]::before { display: block; margin-bottom: 8px; }
+  .admin-dashboard .application-table-person { gap: 8px; }
+  .admin-dashboard .admin-pagination > div { gap: 8px; }
+  .admin-dashboard .admin-pagination button { flex: 1 1 auto; }
+  .portal-modal.application-review { max-width: calc(100vw - 12px); max-height: calc(100dvh - 12px); border-radius: var(--portal-radius-md); }
+  .portal-modal.application-review .review-shell { max-height: calc(100dvh - 14px); }
+  .portal-modal.application-review .review-header { padding: 14px 12px 0; }
+  .portal-modal.application-review .review-body { padding: 16px 12px; }
+  .portal-modal.application-review .review-footer { padding: 12px; }
+  .portal-modal.application-review .review-footer > div { flex: 1 1 100%; }
+  .portal-modal.application-review .review-footer :is(button, a) { min-height: 44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .admin-dashboard .dashboard-sidebar, .admin-dashboard .admin-sidebar-resizer > span { transition: none; }
+}

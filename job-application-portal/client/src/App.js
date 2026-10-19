@@ -21,6 +21,7 @@ import './styles/Interactions.css';
 import './styles/ApplicationReviewModal.css';
 import './styles/ResponsiveTypography.css';
 import './styles/DashboardExperience.css';
+import './styles/PortalSystem.css';
 
 function App() {
   return (
